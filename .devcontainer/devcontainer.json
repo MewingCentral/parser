@@ -26,7 +26,12 @@
 		"vscode": {
 			"extensions": [
 				"vivaxy.vscode-conventional-commits"
-			]
+			],
+			"settings": {
+				"conventionalCommits.scopes": [
+					"devcontainer"
+				]
+			}
 		}
 	}
 }
