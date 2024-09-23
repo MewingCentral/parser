@@ -29,7 +29,8 @@ class SubQuestion(BaseModel, strict=True):
     
     # eg. "a", "b", "c"
     identifier: str
-    max_points: int
+    sub_questions: List['SubQuestion']
+    max_points: int | None = None
 
 class Question(BaseModel, strict=True):
     pages: List[int]
