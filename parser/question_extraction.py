@@ -30,8 +30,6 @@ def get_questions(section: Section) -> List[Question]:
         current_questions: List[Question] = extract_questions(apply_header_filter(page.text), section.type)
         next_plus_current_questions: List[Question] = extract_questions(next_plus_current, section.type)
         
-        #if len(current_questions) == 0 and len(next_plus_current_questions) > 0:
-        #    continue
         
         for question in current_questions:
             question.pages.append(i + section.start_page)
