@@ -21,13 +21,6 @@ class Page(BaseModel, strict=True):
 
     text: str
 
-class Section(BaseModel, strict=True):
-    # 0-indexed page numbers, not including the section page
-    start_page: int
-    end_page: int
-
-    type: SectionType
-    pages: List[Page]
 
 
 class SubQuestion(BaseModel, strict=True):
@@ -39,7 +32,7 @@ class SubQuestion(BaseModel, strict=True):
     max_points: int
 
 class Question(BaseModel, strict=True):
-    pages: List[Page]
+    pages: List[int]
     section_type: SectionType
     question_number: int
     max_points: int
@@ -49,6 +42,15 @@ class Question(BaseModel, strict=True):
     text: str
     
     sub_questions: List[SubQuestion]
+
+class Section(BaseModel, strict=True):
+    # 0-indexed page numbers, not including the section page
+    start_page: int
+    end_page: int
+
+    type: SectionType
+    pages: List[Page]
+    questions: List[Question] | None = None
 
 
 

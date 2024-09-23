@@ -34,7 +34,7 @@ def get_questions(section: Section) -> List[Question]:
         #    continue
         
         for question in current_questions:
-            question.pages.append(page)
+            question.pages.append(i + section.start_page)
             questions[question.question_number] = question
         
         
@@ -45,7 +45,7 @@ def get_questions(section: Section) -> List[Question]:
                 if questions[question.question_number].text != question.text:
                     questions[question.question_number].text = question.text
                     assert next is not None
-                    questions[question.question_number].pages.append(next)
+                    questions[question.question_number].pages.append(i + section.start_page + 1)
 
         write_to_file(f"current_questions_{i}.txt", "\n".join(questions_as_string(current_questions, include_metadata=True)))
         write_to_file(f"next_plus_current_questions_{i}.txt", "\n".join(questions_as_string(next_plus_current_questions, include_metadata=True)))
