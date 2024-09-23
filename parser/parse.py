@@ -74,29 +74,21 @@ def main(input_file):
 
         write_to_file("sections.txt", "\n".join(sections_as_string(sections, include_metadata=True)))
 
+        for section in sections:
+            questions = get_questions(section)
+            section.questions = questions
 
-        basic_data_structures_section = next(
-            (section for section in sections if section.type == SectionType.BASIC_DATA_STRUCTURES), None
-        )
+        import json
 
-        write_to_file("basic_data_structures_sections.txt", "\n".join(
-            sections_as_string([basic_data_structures_section], include_metadata=True)))
+        class Document(BaseModel):
+            sections: List[Section]
+
+        document = Document(sections=sections)
+
+        # Write pydantic models to JSON file
+        with open("document.json", "w") as json_file:
+            json_file.write(document.model_dump_json())
         
-        questions = get_questions(basic_data_structures_section)
-
-        write_to_file(f"questions_basic_data_structures.txt", "\n".join(questions_as_string(questions, include_metadata=True)))
-
-        
-
-        #for i, section in enumerate(sections):
-        #    questions = get_questions(section)
-
-        #    write_to_file(f"questions_{i}.txt", "\n".join(questions_as_string(questions, include_metadata=True)))
-        #    continue
-
-
-        # text_pages = filter_section_pages(text_pages)
-        # write_to_file("filtered_out_section_pages.txt", "\n".join(text_pages))
 
         print("DONE")
     except Exception as e:
