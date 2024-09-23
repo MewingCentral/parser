@@ -21,4 +21,10 @@ def get_sections(pages: List[Page]) -> List[Section]:
             assert last_section_type is not None
             pages_in_section.append(page)
 
+    sections.append(Section(
+                type=last_section_type,
+                start_page=pages_in_section[0].page_number,
+                end_page=pages_in_section[-1].page_number,
+                pages=pages_in_section
+            ))
     return sections
