@@ -45,7 +45,7 @@ def main(input_file):
                 break
             
             if page_type == PageType.SECTION:
-                section_type = get_section_type(page_type, text)
+                section_type = get_section_type(text)
                 if section_type is None:
                     print(f"Breaking on page {
                         page_number} because it is not a valid SectionType")

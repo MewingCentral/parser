@@ -5,7 +5,7 @@ from parser.model import PageType, SectionType, Page
 
 
 
-def extract_section_info(page_type: PageType, text: str) -> Tuple[str, str]:
+def extract_section_info(text: str) -> Tuple[str, str]:
     """
     Extracts section letter and name from a string containing "Section A: XYZ" format.
     
@@ -16,64 +16,61 @@ def extract_section_info(page_type: PageType, text: str) -> Tuple[str, str]:
     Tuple[str, str]: A tuple containing the section letter and section name.
     """
 
-    if page_type == PageType.QUESTION:
-        raise NotImplementedError("Question page type not implemented")
-
-    if page_type == PageType.SECTION:
+    # Looking for the following 2 lines:
+    # Section A 
+    # BASIC DATA STRUCTURES
+    # post 2022 exam regex
+    match = re.search(r"Section\s+([A-D])(?:\s+|\n)(.*?)(?:\n|$)", text, re.DOTALL)
+    print("0", match)
+    if match is None:
+        #print("unable to get section letter using Regex, must be pre 2022 Exam")
         # Looking for the following 2 lines:
-        # Section A 
-        # BASIC DATA STRUCTURES
-        # post 2022 exam regex
-        match = re.search(r"Section\s+([A-D])(?:\s+|\n)(.*?)(?:\n|$)", text, re.DOTALL)
-        
-        if match is None:
-            #print("unable to get section letter using Regex, must be pre 2022 Exam")
-            # Looking for the following 2 lines:
-            # Section I  A  
-            # DATA STRUCTURES  
-            # pre 2022 exam regex
-            match = re.search(r"Section\s+([I|I I]+)\s+([A-Z])\s*\n(.*?)(?:\n|$)", text, re.DOTALL)
-            #print("initial match: ", match)
-            if match:
-                #print("FOUND MATCH")
-                section_number, section_letter, section_name = match.groups()
-                
-                if section_number == "I":
-                    if section_letter == "A":
-                        return "A", "Basic Data Structures"
-                    elif section_letter == "B":
-                        return "B", "Advanced Data Structures"
-                    else:
-                        print(f"Unable to handle section letter: {section_letter}")
-                        print(f"Full match: {match.group(0)}")
-                        print(f"Section number: {section_number}")
-                        print(f"Section name: {section_name}")
-                        return None, None
-                elif section_number == "II":
-                    if section_letter == "A":
-                        return "A", "Algorithm Analysis"
-                    elif section_letter == "B":
-                        return "B", "Algorithms"
-                    else:
-                        print(f"Unable to handle section letter: {section_letter}")
-                        print(f"Full match: {match.group(0)}")
-                        print(f"Section number: {section_number}")
-                        print(f"Section name: {section_name}")
-                        return None, None
-                
-    
-                
-                return section_letter, section_name.strip()
+        # Section I  A  
+        # DATA STRUCTURES  
+        # pre 2022 exam regex
+        match = re.search(r"Section\s+([I|I I]+)\s+([A-Z])\s*\n(.*?)(?:\n|$)", text, re.DOTALL)
+        #print("1", match)
+        #print("initial match: ", match)
+        if match:
+            #print("FOUND MATCH")
+            section_number, section_letter, section_name = match.groups()
+            section_number = section_number.strip()
+            section_letter = section_letter.strip()
+            section_name = section_name.strip()
+            print(f"section_number: '{section_number}'")
+            print(f"section_letter: '{section_letter}'")
+            print(f"section_name: '{section_name}'")
+
+            if section_number == "I":
+                if section_letter == "A":
+                    return "A", "Data Structures"
+                elif section_letter == "B":
+                    return "B", "Advanced Data Structures"
+                else:
+                    print(f"Unable to handle section letter: {section_letter}")
+                    print(f"Full match: {match.group(0)}")
+                    print(f"Section number: {section_number}")
+                    print(f"Section name: {section_name}")
+                    return None, None
+            elif section_number == "II" or section_number == "I I":
+                if section_letter == "A":
+                    return "A", "Algorithm Analysis"
+                elif section_letter == "B":
+                    return "B", "Algorithms"
+                else:
+                    print(f"Unable to handle section letter: {section_letter}")
+                    print(f"Full match: {match.group(0)}")
+                    print(f"Section number: {section_number}")
+                    print(f"Section name: {section_name}")
+                    return None, None
             
-            return None, None
+
+            
+            return section_letter, section_name.strip()
         
-        # print(match.group(1), match.group(2))
-    else:
-        print("invalid page type")
         return None, None
-    if match:
-        return match.group(1), match.group(2).strip()
-    return None, None
+    
+    return match.group(1), match.group(2).strip()
 
 
 def get_page_type(text: str) -> PageType | None:
@@ -82,8 +79,8 @@ def get_page_type(text: str) -> PageType | None:
     return PageType.QUESTION
 
 
-def get_section_type(page_type: PageType, text: str) -> SectionType | None:
-    section_letter, section_name = extract_section_info(page_type, text)
+def get_section_type(text: str) -> SectionType | None:
+    section_letter, section_name = extract_section_info(text)
         
     if section_letter is None:
         print("unable to get section letter")
