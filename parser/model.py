@@ -1,6 +1,6 @@
 from enum import StrEnum
 from pydantic import BaseModel
-from typing import List
+from typing import List, Union
 
 class PageType(StrEnum):
     SECTION = "Section"
@@ -11,6 +11,21 @@ class SectionType(StrEnum):
     ADVANCED_DATA_STRUCTURES = "Advanced Data Structures"
     ALGORITHM_ANALYSIS = "Algorithm Analysis"
     ALGORITHMS = "Algorithms"
+
+class TableCell(BaseModel, strict = True):
+    content: str
+
+class TableRow(BaseModel, strict = True):
+    cells: List[TableCell]
+
+class Table(BaseModel, strict = True):
+    rows: List[TableRow]
+
+class Graphics(BaseModel, strict = True):
+    # table is currently the only implemented element.
+    element_type: str
+    # enentually, add Line, Circle, and anything else relevant.
+    data: Union[Table]
     
 class Page(BaseModel, strict=True):
     page_type: PageType
@@ -18,8 +33,9 @@ class Page(BaseModel, strict=True):
     
     # 0-indexed page numbers, not including the section page
     page_number: int
-
     text: str
+
+    graphics: List[Graphics] | None = None
 
 
 
@@ -54,7 +70,6 @@ class Section(BaseModel, strict=True):
     questions: List[Question] | None = None
 
 
-
 def pages_as_string(pages: List[Page], include_metadata: bool = False) -> List[str]:
     result = []
     for page in pages:
@@ -79,3 +94,19 @@ def questions_as_string(questions: List[Question], include_metadata: bool = Fals
             result.append(f"Question {question.question_number}, SectionType: {question.section_type}, Category: {question.category}, SubCategory: {question.sub_category}")
         result.append(question.text)
     return result
+
+def table_as_string(table : Table) -> str:
+    result = []
+    for row in table.rows:
+        row_str = " | ".join([cell.content for cell in row.cells])
+        result.append(row_str)
+    return "\n".join(result)
+
+def tables_as_string(tables : List[Table]) -> str:
+    tables_list = []
+    for table_number, table in enumerate(tables):
+        tables_list.append(f"Table {table_number + 1}:")
+        for row in table.rows:
+            row_str = " | ".join([cell.content for cell in row.cells])
+            tables_list.append(row_str)
+    return "\n".join(tables_list)
