@@ -10,6 +10,10 @@ question_pattern = re.compile(
     re.DOTALL
 )
 
+sub_question_pattern = re.compile(
+    r"(?m)^\s*(?:\(\s*([a-z])\s*\)|([a-z])\.|([a-z])\))\s*(?:\(\s*(\d+)\s*pts?\s*\))?\s*([\s\S]*?)(?=^\s*(?:\(\s*[a-z]\s*\)|[a-z]\.|[a-z]\))|\Z)",
+    re.DOTALL
+)
 
 def get_questions(section: Section) -> List[Question]:
     questions: Dict[int, Question] = {}
@@ -105,10 +109,6 @@ def extract_questions(text: str, section_type: SectionType) -> List[Question]:
 
 # (?m)^\s*(?:\(\s*([a-z])\s*\)|([a-z])\.)\s*(?:\(\s*(\d+)\s*pts?\s*\))?\s*([\s\S]*?)(?=^\s*(?:\(\s*[a-z]\s*\)|[a-z]\.)|\Z)
 
-sub_question_pattern = re.compile(
-    "(?m)^\s*(?:\(\s*([a-z])\s*\)|([a-z])\.|([a-z])\))\s*(?:\(\s*(\d+)\s*pts?\s*\))?\s*([\s\S]*?)(?=^\s*(?:\(\s*[a-z]\s*\)|[a-z]\.|[a-z]\))|\Z)",
-    re.DOTALL
-)
 
 
 def extract_sub_questions(text: str) -> List[SubQuestion]:
