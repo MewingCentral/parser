@@ -27,7 +27,8 @@
 			],
 			"settings": {
 				"conventionalCommits.scopes": [
-					"devcontainer"
+					"devcontainer",
+					"experiments"
 				]
 			}
 		}
