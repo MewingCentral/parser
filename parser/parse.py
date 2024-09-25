@@ -5,10 +5,13 @@ from typing import List, Tuple
 from enum import StrEnum
 import re
 
-from parser.model import PageType, SectionType, Section, Page, pages_as_string, sections_as_string, questions_as_string, Question
+from parser.model import PageType, SectionType, Section, Page, pages_as_string, sections_as_string, questions_as_string, Question, tables_as_string
 from parser.page_processing import get_page_type, get_section_type
 from parser.section_processing import get_sections
 from parser.question_extraction import get_questions
+
+from parser.vector_processing import extract_tables
+
 class Question(BaseModel):
     id: int
     original_page_number: int
@@ -62,6 +65,10 @@ def main(input_file):
             pages.append(page)
             
             previous_section_type = section_type
+
+        print("hopefully extracting tables from pdfs")
+        tables = extract_tables(input_file)
+        write_to_file("tables.txt", tables_as_string(tables))
 
         write_to_file("raw.txt", "\n".join(
             pages_as_string(pages, include_metadata=False)))
