@@ -3,7 +3,7 @@ from typing import List
 
 import pdfplumber
     
-# function to extract the largest table on a provided page
+
 def extract_tables(input_file : str) -> List[Table]:
     """Enumerates all pages of a provided FE and extracts the largest table on each page.
     
@@ -12,19 +12,20 @@ def extract_tables(input_file : str) -> List[Table]:
 
     with pdfplumber.open(input_file) as pdf:
         for page_number, page in enumerate(pdf.pages):
-            # customize 'extract_table' settings to account for empty cells.
-            
-            raw_table = page.extract_table({
-                "snap_tolerance": 3
-            })
+            raw_table = page.extract_table()
 
             if raw_table is None:
                 print(f"No table found on page {page_number}")
                 continue
+            print(f"Table found on page {page_number}")
 
+            table_coordinates = page.bbox
+            print(f"Bounding box data for the page:")
+            print(f"Page number {page_number} and coordinates {table_coordinates}")
+            
             table_rows = []
             for raw_row in raw_table:
-                print(f"Largest table found on {page_number}.")
+                print(f"At least 1 table found page {page_number}.")
                 if raw_row is None:
                     continue
                 row_cells = [TableCell(content=cell if cell is not None else "") for cell in raw_row]
