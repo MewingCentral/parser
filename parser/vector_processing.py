@@ -12,7 +12,11 @@ def extract_tables(input_file : str) -> List[Table]:
 
     with pdfplumber.open(input_file) as pdf:
         for page_number, page in enumerate(pdf.pages):
-            raw_table = page.extract_table()
+            # customize 'extract_table' settings to account for empty cells.
+            raw_table = page.extract_table({
+                "explicit_blank_spaces": True,
+                "snap_tolerance": 3
+            })
 
             if raw_table is None:
                 print(f"No table found on page {page_number}")
@@ -26,7 +30,6 @@ def extract_tables(input_file : str) -> List[Table]:
                 row_cells = [TableCell(content=cell if cell is not None else "") for cell in raw_row]
                 table_rows.append(TableRow(cells=row_cells))
 
-            # Append the Table for this page to the list of tables
             if table_rows:
                 tables.append(Table(rows=table_rows))
 

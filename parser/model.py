@@ -1,6 +1,6 @@
 from enum import StrEnum
 from pydantic import BaseModel
-from typing import List, Union
+from typing import List, Union, Optional
 
 class PageType(StrEnum):
     SECTION = "Section"
@@ -13,13 +13,14 @@ class SectionType(StrEnum):
     ALGORITHMS = "Algorithms"
 
 class TableCell(BaseModel, strict = True):
-    content: str
+    content: Optional[str]
 
 class TableRow(BaseModel, strict = True):
     cells: List[TableCell]
 
 class Table(BaseModel, strict = True):
     rows: List[TableRow]
+
 
 class Graphics(BaseModel, strict = True):
     # table is currently the only implemented element.
@@ -36,8 +37,6 @@ class Page(BaseModel, strict=True):
     text: str
 
     graphics: List[Graphics] | None = None
-
-
 
 class SubQuestion(BaseModel, strict=True):
     # text excluding the sub-question number and the "a) " prefix
@@ -86,7 +85,6 @@ def sections_as_string(sections: List[Section], include_metadata: bool = False) 
         result.append("\n".join(pages_as_string(section.pages, include_metadata=include_metadata)))
     return result
 
-
 def questions_as_string(questions: List[Question], include_metadata: bool = False) -> List[str]:
     result = []
     for question in questions:
@@ -107,6 +105,8 @@ def tables_as_string(tables : List[Table]) -> str:
     for table_number, table in enumerate(tables):
         tables_list.append(f"Table {table_number + 1}:")
         for row in table.rows:
-            row_str = " | ".join([cell.content for cell in row.cells])
-            tables_list.append(row_str)
+            row_str = " | ".join([cell.content if cell.content is not None else " " for cell in row.cells])
+            tables_list.append(f"| {row_str} |")
+        tables_list.append("")
+        
     return "\n".join(tables_list)

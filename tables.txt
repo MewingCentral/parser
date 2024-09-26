@@ -1,0 +1,41 @@
+Table 1:
+| Question # | Max Pts | Category | Score |
+| 1 | 10 | DSN |  |
+| 2 | 5 | ALG |  |
+| 3 | 10 | ALG |  |
+| TOTAL | 25 | ---- |  |
+
+Table 2:
+|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+
+Table 3:
+| Question # | Max Pts | Category | Score |
+| 1 | 10 | DSN |  |
+| 2 | 10 | DSN |  |
+| 3 | 5 | ALG |  |
+| TOTAL | 25 |  |  |
+
+Table 4:
+| Question # | Max Pts | Category | Score |
+| 1 | 10 | ANL |  |
+| 2 | 10 | ANL |  |
+| 3 | 5 | ANL |  |
+| TOTAL | 25 |  |  |
+
+Table 5:
+| Question # | Max Pts | Category | Score |
+| 1 | 10 | DSN |  |
+| 2 | 5 | ALG |  |
+| 3 | 10 | ALG |  |
+| TOTAL | 25 |  |  |
+
+Table 6:
+| Iteration | Index 0 | Index 1 | Index 2 | Index 3 | Index 4 | Index 5 | Index 6 | Index 7 |
+| 0 | 16 | 3 | 18 | 15 | 1 | 8 | 12 | 4 |
+| 1 | 3 | 16 | 18 | 15 | 1 | 8 | 12 | 4 |
+| 2 |  |  |  |  |  |  |  |  |
+| 3 |  |  |  |  |  |  |  |  |
+| 4 |  |  |  |  |  |  |  |  |
+| 5 |  |  |  |  |  |  |  |  |
+| 6 |  |  |  |  |  |  |  |  |
+| 7 | 1 | 3 | 4 | 8 | 12 | 15 | 16 | 18 |
