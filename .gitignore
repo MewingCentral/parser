@@ -154,6 +154,16 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# generated question files from parser for any output not relevant to graphics.
+current_questions_*.txt
+next_plus_current_questions_*.txt
+raw*.txt
+sections.txt
+document.json
+
+# ignore foundation exam folder for now since scraper is being worked in by Anna.
+foundation-exams/
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

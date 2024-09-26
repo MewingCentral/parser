@@ -24,8 +24,6 @@ class PreProcessedExam(BaseModel):
     sections: List[Section]
 
 # from .types import Question
-
-
 def main(input_file):
     try:
         # Open and read the PDF file
@@ -66,7 +64,7 @@ def main(input_file):
             
             previous_section_type = section_type
 
-        print("hopefully extracting tables from pdfs")
+        print("Extracting tables from pdfs")
         tables = extract_tables(input_file)
         write_to_file("tables.txt", tables_as_string(tables))
 

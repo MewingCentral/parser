@@ -2,7 +2,7 @@ from parser.model import Section, SectionType, Page, Table, TableCell, TableRow
 from typing import List
 
 import pdfplumber
-
+    
 # function to extract the largest table on a provided page
 def extract_tables(input_file : str) -> List[Table]:
     """Enumerates all pages of a provided FE and extracts the largest table on each page.
@@ -13,8 +13,8 @@ def extract_tables(input_file : str) -> List[Table]:
     with pdfplumber.open(input_file) as pdf:
         for page_number, page in enumerate(pdf.pages):
             # customize 'extract_table' settings to account for empty cells.
+            
             raw_table = page.extract_table({
-                "explicit_blank_spaces": True,
                 "snap_tolerance": 3
             })
 
@@ -24,7 +24,7 @@ def extract_tables(input_file : str) -> List[Table]:
 
             table_rows = []
             for raw_row in raw_table:
-                print(f"At least 1 table found page {page_number}.")
+                print(f"Largest table found on {page_number}.")
                 if raw_row is None:
                     continue
                 row_cells = [TableCell(content=cell if cell is not None else "") for cell in raw_row]
