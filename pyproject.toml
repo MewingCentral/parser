@@ -13,7 +13,6 @@ pydantic = "^2.9.2"
 pymupdf = "^1.24.10"
 requests = "^2.32.3"
 bs4 = "^0.0.2"
-pypdf2 = "^3.0.1"
 nltk = "^3.9.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -33,7 +32,10 @@ instructor = "^1.5.1"
 [[tool.poetry.source]]
 name = "llama-cpp-python"
 url = "https://abetlen.github.io/llama-cpp-python/whl/cu122"
-priority = "explicit"
+priority = "explicit"requests = "^2.32.3"
+bs4 = "^0.0.2"
+pypdf2 = "^3.0.1"
+
 
 [build-system]
 requires = ["poetry-core"]
