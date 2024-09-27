@@ -46,8 +46,7 @@ def main(input_file):
             if page_type == PageType.SECTION:
                 section_type = get_section_type(text)
                 if section_type is None:
-                    print(f"Breaking on page {
-                        page_number} because it is not a valid SectionType")
+                    print(f"Breaking on page {page_number} because it is not a valid SectionType")
                     print(text)
                     break
             else:
@@ -103,8 +102,7 @@ def write_to_file(filename: str, content: str):
             file.write(content)
         print(f"Successfully wrote content to {filename}")
     except IOError as e:
-        print(f"An error occurred while writing to {
-              filename}: {e}", file=sys.stderr)
+        print(f"An error occurred while writing to {filename}: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":
