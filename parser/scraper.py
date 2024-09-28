@@ -36,20 +36,4 @@ for i in range(0, len(pdf_anchors), 3):
         pdf = open(pdfs_dir + "/" + dir_name + "/" + file_name, 'wb')
         pdf.write(response.content)
         pdf.close()
-
-
-
-
-# for pdf_anchor in pdf_anchors:
-#     cur_link = pdf_anchor.get('href')
-#     # Only save pdfs for exams and solution documents
-#     if ('.pdf' in cur_link and not('Info' in cur_link)):
-#         response = requests.get(url + cur_link)
-
-#         path = "exam_sols/" if "Sol" in cur_link else "exams/"
-#         path += cur_link.rsplit('/', 1)[-1]
-#         # print(path)
-
-#         pdf = open(path, 'wb')
-#         pdf.write(response.content)
-#         pdf.close()
+        
