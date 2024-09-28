@@ -10,28 +10,46 @@ read = requests.get(url) # Get request for HTML
 html = read.content
 soup = BeautifulSoup(html, "html.parser")
 
-pdf_anchors = soup.find_all(href=re.compile("pdf"))
-pdf_anchors[0]
-# print(bool(re.search(r"sol", "FE_sol.pdf", re.IGNORECASE)))
+# Is the tag a PDF link for an exam that has no discrete section?
+def pdf_before_discrete(tag):
+    return tag.name == "a" and re.search(".pdf", tag["href"]) and not re.search("CS|DS", tag["href"])
 
-# Make directories to store PDFs
-exams_dir = "exams"
-sols_dir = "exam_sols"
-if (not os.path.exists(exams_dir)):
-    os.makedirs(exams_dir)
-if (not os.path.exists(sols_dir)):
-    os.makedirs(sols_dir)
+pdf_anchors = soup.find_all(pdf_before_discrete)
 
-for pdf_anchor in pdf_anchors:
-    cur_link = pdf_anchor.get('href')
-    # Only save pdfs for exams and solution documents
-    if ('.pdf' in cur_link and not('Info' in cur_link)):
+pdfs_dir = "pdfs"
+if (not os.path.exists(pdfs_dir)):
+    os.makedirs(pdfs_dir)
+
+for i in range(0, len(pdf_anchors), 3):
+    # A chunk corresponds to all docs for a single exam
+    chunk = pdf_anchors[i:i+3]
+
+    # Make the directory for the current exam
+    dir_name = re.findall(r"/(.*)\.", chunk[0].get("href"))[0]
+    if (not os.path.exists(pdfs_dir + "/" + dir_name)):
+        os.makedirs(pdfs_dir + "/" + dir_name)
+
+    for doc in chunk:
+        cur_link = doc.get("href")
         response = requests.get(url + cur_link)
-
-        path = "exam_sols/" if "Sol" in cur_link else "exams/"
-        path += cur_link.rsplit('/', 1)[-1]
-        # print(path)
-
-        pdf = open(path, 'wb')
+        file_name = cur_link.rsplit('/', 1)[-1]
+        pdf = open(pdfs_dir + "/" + dir_name + "/" + file_name, 'wb')
         pdf.write(response.content)
         pdf.close()
+
+
+
+
+# for pdf_anchor in pdf_anchors:
+#     cur_link = pdf_anchor.get('href')
+#     # Only save pdfs for exams and solution documents
+#     if ('.pdf' in cur_link and not('Info' in cur_link)):
+#         response = requests.get(url + cur_link)
+
+#         path = "exam_sols/" if "Sol" in cur_link else "exams/"
+#         path += cur_link.rsplit('/', 1)[-1]
+#         # print(path)
+
+#         pdf = open(path, 'wb')
+#         pdf.write(response.content)
+#         pdf.close()

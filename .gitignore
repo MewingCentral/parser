@@ -186,8 +186,7 @@ exam_paths.json
 document.json
 
 # Scraped PDF directories
-/exam_sols
-/exams
+/pdfs
 
 # Generated files
 current_questions_0.txt
