@@ -53,6 +53,12 @@ See below for an example (may not be exactly the same):
 
 ## Running
 
+### Scraper: <br>
+Note that PDFs will be stored in exam-specific directories in parser/pdfs.
+```
+python parser/scrape.py 
+```
+### Parser: <br>
 ```
 python parser/parse.py <path to FE pdf>
 ```
