@@ -55,6 +55,13 @@ This project includes a parser for processing FE (Foundation Exam) exam PDFs and
 
 ## Running the Parser
 
+### Scraper: <br>
+Note that PDFs will be stored in exam-specific directories in parser/pdfs.
+```
+python parser/scrape.py 
+```
+### Parser: <br>
+
 To run the parser, use the following command:
 
 ### Scraper: <br>
@@ -129,3 +136,34 @@ To use the dev containers, follow these steps:
    - To switch between the base and CUDA dev containers, repeat step 3 and select the other configuration.
    - VSCode will rebuild and restart the environment with the new configuration.
 
+### Python Virtual Environment
+
+In VSCode, open any python file and at the bottom right of your screen you should see the python environment being used, see screenshot below:
+
+![python-env](./docs/images/python-env.png)
+
+On your side, click the button that is in the place of where it says "3.12.6" on my screenshot. Select the python virtual environment that includes the word `.venv`.
+
+See below for an example (may not be exactly the same):
+
+![python-env-2](./docs/images/python-env-2.png)
+
+
+## Running
+
+```
+python parser/parse.py <path to FE pdf>
+```
+
+Open `document.json` to see the parsed questions.
+
+## Common Issues
+
+### Permission denied
+
+If you get a permission denied error, you will need to update the owner of the file to the user in the container.
+
+From within the container, run the following command:
+```
+sudo chown -R vscode:vscode /workspace/parser
+```
