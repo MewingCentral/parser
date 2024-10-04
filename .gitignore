@@ -175,42 +175,4 @@ next_plus_current_questions_2.txt
 raw.txt
 raw_with_meta.txt
 sections.txt
-
-# Downloaded models folder... see ./scripts/install_hermes.sh for more information
-models
-
-# Foundation Exam Files
-fe_files
-
-# Scraped PDF directories
-/pdfs
-
-# Generated files
-current_questions_0.txt
-current_questions_1.txt
-current_questions_2.txt
-document.json
-next_plus_current_questions_0.txt
-next_plus_current_questions_1.txt
-next_plus_current_questions_2.txt
-raw.txt
-raw_with_meta.txt
-sections.txt
 exam_paths.json
-
-document.json
-
-# Scraped PDF directories
-/pdfs
-
-# Generated files
-current_questions_0.txt
-current_questions_1.txt
-current_questions_2.txt
-document.json
-next_plus_current_questions_0.txt
-next_plus_current_questions_1.txt
-next_plus_current_questions_2.txt
-raw.txt
-raw_with_meta.txt
-sections.txt
