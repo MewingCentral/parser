@@ -1,6 +1,6 @@
 from enum import StrEnum
 from pydantic import BaseModel
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Tuple
 
 class PageType(StrEnum):
     SECTION = "Section"
@@ -14,6 +14,10 @@ class SectionType(StrEnum):
 
 class TableCell(BaseModel, strict = True):
     content: Optional[str]
+    # (x0, y0, x1, y0) coordinates of the cell
+    rect: Optional[Tuple[float, float, float, float]] = None
+    width: Optional[float] = None
+    height: Optional[float] = None
 
 class TableRow(BaseModel, strict = True):
     cells: List[TableCell]
@@ -27,6 +31,9 @@ class Graphics(BaseModel, strict = True):
     element_type: str
     # enentually, add Line, Circle, and anything else relevant.
     data: Union[Table]
+    rect: Optional[Tuple[float, float, float, float]] = None
+    width: Optional[float] = None
+    height: Optional[float] = None
     
 class Page(BaseModel, strict=True):
     page_type: PageType
@@ -110,3 +117,19 @@ def tables_as_string(tables : List[Table]) -> str:
         tables_list.append("")
         
     return "\n".join(tables_list)
+
+def coordinates_as_string(graphics: List[Graphics]) -> List[str]:
+    result = []
+    for graphic in graphics:
+        if graphic.rect:
+            rect = graphic.rect
+            result.append(f"Graphics {graphic.element_type} - Rect: {rect}, Width: {graphic.width}, Height: {graphic.height}.")
+        
+        if isinstance(graphic.data, Table):
+            table = graphic.data
+            for row_number, row in enumerate(table.rows):
+                for cell_number, cell in enumerate(row.cells):
+                    if cell.rect:
+                        result.append(f"Table Cell [Row {row_number}, Cell {cell_number}] - Rect: {cell.rect}, Width: {cell.width}, Height: {cell.height}")
+
+    return "\n".join(result)       
