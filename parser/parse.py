@@ -5,12 +5,12 @@ from typing import List, Tuple
 from enum import StrEnum
 import re
 
-from parser.model import PageType, SectionType, Section, Page, pages_as_string, sections_as_string, questions_as_string, Question, tables_as_string
+from parser.model import PageType, SectionType, Section, Page, pages_as_string, sections_as_string, questions_as_string, Question, tables_as_string, coordinates_as_string
 from parser.page_processing import get_page_type, get_section_type
 from parser.section_processing import get_sections
 from parser.question_extraction import get_questions
 
-from parser.vector_processing import extract_tables
+from parser.vector_processing import extract_tables, extract_table_coordinates
 
 class Question(BaseModel):
     id: int
@@ -67,6 +67,10 @@ def main(input_file):
         print("Extracting tables from pdfs")
         tables = extract_tables(input_file)
         write_to_file("tables.txt", tables_as_string(tables))
+
+        print("Extracting table coordinates from pdfs")
+        table_dimensions = extract_table_coordinates(input_file)
+        write_to_file("table_dimensions.txt", coordinates_as_string(table_dimensions))
 
         write_to_file("raw.txt", "\n".join(
             pages_as_string(pages, include_metadata=False)))
