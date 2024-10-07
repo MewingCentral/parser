@@ -1,5 +1,5 @@
 from parser.model import Section, SectionType, Page, Table, TableCell, TableRow
-from typing import List
+from typing import List, Tuple
 
 import pdfplumber
     
@@ -35,31 +35,29 @@ def extract_tables(input_file : str) -> List[Table]:
 
     return tables
 
-def extract_table_coordinates(input_file : str) -> List[tuple[float, float]]:
+def extract_table_coordinates(input_file : str) -> List[Tuple[float, float, float, float]]:
     """
-    Extracts the width and height of all rectangular vector graphics on each page of the provided FE.
+    Extracts the x0, y0, x1, and y1 of all rectangular vector graphics on each page of the provided FE. currently,
+    pages are being considered vector graphics as well by this processing algorithm. 
 
     Parameter:
     - input_file (str) : path to the FE exam file.
 
     Returns:
-    - table_dimensions (list of tuples) : list of tuples containing the width and height of each table found on each page.
+    - table_dimensions (list of tuples) : list of tuples containing 4 coordinates for each table located on every page.
+        - x0 (float) : Distance of left side of rectangle from left side of page.
+        - y0 (float) : Distance of bottom of rectangle from bottom of page.
+        - x1 (float) : Distance of right side of rectangle from left side of page.
+        - y1 (float) : Distance of top of rectangle from bottom of page.
     """
-    # initialize an empty list to store the width and height of each table found on each page
-    table_dimensions = []
 
-    # open the FE exam file
+    rectangles = []
+
     with pdfplumber.open(input_file) as pdf:
         for page_number, page in enumerate(pdf.pages):
             page = pdf.pages[page_number]
             
-            # use the objects attribute to extract the vector graphics on the page
-            rectangles = page.objects['rects']
-            
-            # extract the width and height of each rectangle
-            for rectangle in rectangles:
-                width = rectangle['width']
-                height = rectangle['height']
-                table_dimensions.append((width, height))
+            for rect in page.objects.get('rect', []):
+                rectangles.append((rect['x0'], rect['y0'], rect['x1'], rect['y1']))
 
-    return table_dimensions
+    return rectangles

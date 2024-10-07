@@ -25,11 +25,10 @@ class TableRow(BaseModel, strict = True):
 class Table(BaseModel, strict = True):
     rows: List[TableRow]
 
-
 class Graphics(BaseModel, strict = True):
     # table is currently the only implemented element.
     element_type: str
-    # enentually, add Line, Circle, and anything else relevant.
+    # eventually, add Line, Circle, and anything else relevant.
     data: Union[Table]
     rect: Optional[Tuple[float, float, float, float]] = None
     width: Optional[float] = None
@@ -118,18 +117,30 @@ def tables_as_string(tables : List[Table]) -> str:
         
     return "\n".join(tables_list)
 
-def coordinates_as_string(graphics: List[Graphics]) -> List[str]:
+def coordinates_as_string(graphics: List[Union[Graphics, Tuple[float, float, float, float]]]) -> str:
     result = []
     for graphic in graphics:
-        if graphic.rect:
-            rect = graphic.rect
-            result.append(f"Graphics {graphic.element_type} - Rect: {rect}, Width: {graphic.width}, Height: {graphic.height}.")
+        if isinstance(graphic, tuple) and len(graphic) == 4:
+            x0, y0, x1, y1 = graphic
+            width = x1 - x0
+            height = y1 - y0
+            # pages are currently being treated as tables with widths of 612 and heights of 792
+            # if this becomes an issue, I can fix it later but might not be necessary.
+            result.append(f"Table Coordinates: {graphic}, Width: {width}, Height: {height}")
         
-        if isinstance(graphic.data, Table):
-            table = graphic.data
-            for row_number, row in enumerate(table.rows):
-                for cell_number, cell in enumerate(row.cells):
-                    if cell.rect:
-                        result.append(f"Table Cell [Row {row_number}, Cell {cell_number}] - Rect: {cell.rect}, Width: {cell.width}, Height: {cell.height}")
+        elif isinstance(graphic, Graphics):
+            if graphic.rect:
+                rect = graphic.rect
+                result.append(f"Graphics {graphic.element_type} - Rect: {rect}, Width: {graphic.width}, Height: {graphic.height}")
 
-    return "\n".join(result)       
+            if isinstance(graphic.data, Table):
+                table = graphic.data
+                for row_index, row in enumerate(table.rows):
+                    for cell_index, cell in enumerate(row.cells):
+                        if cell.rect:
+                            result.append(f"Table Cell [Row {row_index}, Cell {cell_index}] - Rect: {cell.rect}, Width: {cell.width}, Height: {cell.height}")
+        
+        else:
+            result.append(f"Unexpected graphic type: {type(graphic)}")
+
+    return "\n".join(result)
