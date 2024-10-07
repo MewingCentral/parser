@@ -17,22 +17,6 @@ soup = BeautifulSoup(html, "html.parser")
 def pdf_before_discrete(tag):
     return tag.name == "a" and re.search(".pdf", tag["href"]) and not re.search("CS|DS", tag["href"])
 
-# Return a string containing the semester and year of the exam specified
-def get_semester_and_year(file_name):
-    retval = ""
-
-    # Get semester
-    if (re.search(r"(jan)|(feb)|(mar)|(apr)", file_name, re.IGNORECASE) != None):
-        retval = "spring"
-    elif (re.search(r"(may)|(jun)|(jul)", file_name, re.IGNORECASE)):
-        retval = "summer"
-    else: 
-        retval = "fall"
-
-    # Get year
-    retval += re.findall(r"[0-9]+", file_name)[0]
-    return retval
-
 # Return a string describing the type of exam document
 def get_document_type(file_name):
     if (re.search(r"sol", file_name, re.IGNORECASE)):
@@ -58,8 +42,7 @@ for i in range(0, len(pdf_anchors), 3):
         os.makedirs(pdfs_dir + "/" + dir_name)
 
     # Configure json output
-    exam = get_semester_and_year(dir_name) + "_paths"
-    json_output["documents"][exam] = {}
+    json_output["documents"][dir_name] = {}
 
     for doc in chunk:
         cur_link = doc.get("href")
@@ -70,7 +53,7 @@ for i in range(0, len(pdf_anchors), 3):
         path = pdfs_dir + "/" + dir_name + "/" + file_name
 
         # Configure json output
-        json_output["documents"][exam][doc_type] = path
+        json_output["documents"][dir_name][doc_type] = path
 
         pdf = open(path, 'wb')
         pdf.write(response.content)
