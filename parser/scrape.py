@@ -62,5 +62,4 @@ for i in range(0, len(pdf_anchors), 3):
 output_file = open("exam_paths.json", "w")
 output_file.write(json.dumps(json_output))
 output_file.close()
-
         
