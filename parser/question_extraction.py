@@ -104,7 +104,12 @@ def extract_questions(text: str, section_type: SectionType) -> List[Question]:
     matches = question_pattern.findall(text)
 
     for match in matches:
-        question_number, max_points, category, sub_category, text = match
+        question_number, max_points, category, sub_category, question_text = match
+
+        sub_questions = extract_sub_questions(question_text)
+        for sub_question in sub_questions:
+            question_text = question_text.replace(sub_question.text, "").strip()
+
         question = Question(
             pages=[],
             section_type=section_type,
@@ -112,8 +117,8 @@ def extract_questions(text: str, section_type: SectionType) -> List[Question]:
             max_points=int(max_points),
             category=category,
             sub_category=sub_category,
-            text=text.strip(),
-            sub_questions=extract_sub_questions(text)
+            text=question_text,
+            sub_questions=sub_questions,
         )
         questions.append(question)
 
