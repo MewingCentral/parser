@@ -23,7 +23,7 @@ class PreProcessedExam(BaseModel):
 # from .types import Question
 
 
-def main(input_file):
+def main(input_file: str, verbose: bool = False) -> List[Section]:
     try:
         # Open and read the PDF file
         reader = PdfReader(input_file)
@@ -63,21 +63,21 @@ def main(input_file):
             
             previous_section_type = section_type
 
-        write_to_file("raw.txt", "\n".join(
-            pages_as_string(pages, include_metadata=False)))
-        write_to_file("raw_with_meta.txt", "\n".join(
-            pages_as_string(pages, include_metadata=True)))
+        if verbose:
+            write_to_file("raw.txt", "\n".join(
+                pages_as_string(pages, include_metadata=False)))
+            write_to_file("raw_with_meta.txt", "\n".join(
+                pages_as_string(pages, include_metadata=True)))
 
         sections: List[Section] = get_sections(pages)
 
 
-        write_to_file("sections.txt", "\n".join(sections_as_string(sections, include_metadata=True)))
+        if verbose:
+                write_to_file("sections.txt", "\n".join(sections_as_string(sections, include_metadata=True)))
 
         for section in sections:
             questions = get_questions(section)
             section.questions = questions
-
-        import json
 
         class Document(BaseModel):
             sections: List[Section]
@@ -87,9 +87,8 @@ def main(input_file):
         # Write pydantic models to JSON file
         with open("document.json", "w") as json_file:
             json_file.write(document.model_dump_json())
-        
-
-        print("DONE")
+            
+        return sections
     except Exception as e:
         print(f"An error occurred: {e}", file=sys.stderr)
         import traceback
