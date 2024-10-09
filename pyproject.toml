@@ -11,16 +11,26 @@ pypdf = "5.0.0"
 pillow = "10.4.0"
 pydantic = "^2.9.2"
 pymupdf = "^1.24.10"
-langchain-community = { version = "^0.3.0", optional = true }
-llama-cpp-python = { version = "^0.3.0", optional = true }
+instructor = "^1.5.1"
+llama-cpp-python = { version = "^0.2.0", optional = true}
 
 [tool.poetry.extras]
-experiment = ["langchain-community", "llama-cpp-python"]
-
-
+experiment = ["instructor", "llama-cpp-python"]
+cuda = ["llama-cpp-python"]
+   
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
+
+[tool.poetry.group.experiments.dependencies]
+instructor = "^1.5.1"
+
+[[tool.poetry.source]]
+name = "llama-cpp-python"
+url = "https://abetlen.github.io/llama-cpp-python/whl/cu122"
+priority = "primary"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
