@@ -161,8 +161,14 @@ raw*.txt
 sections.txt
 document.json
 
+# ignore all files from the questions folder for now
+questions/
+
 # ignore foundation exam folder for now since scraper is being worked in by Anna.
 foundation-exams/
+
+# ignore all files from the vecotr-graphics folder for now
+vector-graphics/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
