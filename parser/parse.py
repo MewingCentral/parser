@@ -12,6 +12,8 @@ from parser.question_extraction import get_questions
 
 from parser.vector_processing import extract_tables, extract_table_coordinates
 
+attribute_matrices_path = "vector-graphics/attribute_matrices/"
+
 class Question(BaseModel):
     id: int
     original_page_number: int
@@ -66,21 +68,21 @@ def main(input_file):
 
         print("Extracting tables from pdfs")
         tables = extract_tables(input_file)
-        write_to_file("tables.txt", tables_as_string(tables))
+        write_to_file(attribute_matrices_path + "tables.txt", tables_as_string(tables))
 
         print("Extracting table coordinates from pdfs")
         table_dimensions = extract_table_coordinates(input_file)
-        write_to_file("table_dimensions.txt", coordinates_as_string(table_dimensions))
+        write_to_file(attribute_matrices_path + "table_dimensions.txt", coordinates_as_string(table_dimensions))
 
-        write_to_file("raw.txt", "\n".join(
+        write_to_file("questions/raw.txt", "\n".join(
             pages_as_string(pages, include_metadata=False)))
-        write_to_file("raw_with_meta.txt", "\n".join(
+        write_to_file("questions/raw_with_meta.txt", "\n".join(
             pages_as_string(pages, include_metadata=True)))
 
         sections: List[Section] = get_sections(pages)
 
 
-        write_to_file("sections.txt", "\n".join(sections_as_string(sections, include_metadata=True)))
+        write_to_file("questions/sections.txt", "\n".join(sections_as_string(sections, include_metadata=True)))
 
         for section in sections:
             questions = get_questions(section)
