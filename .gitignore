@@ -89,6 +89,7 @@ foundation-exams/
 
 # ignore document.json since only using that file to generate question input file 
 # for AI model and not making any changes to the actual file in this repo.
+data-artifacts/
 document.json
 
 
