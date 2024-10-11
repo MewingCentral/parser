@@ -82,6 +82,16 @@ target/
 profile_default/
 ipython_config.py
 
+# ignore vector graphics folder, questions folder, and foundations exam folder.
+vector-graphics/
+questions/
+foundation-exams/
+
+# ignore document.json since only using that file to generate question input file 
+# for AI model and not making any changes to the actual file in this repo.
+document.json
+
+
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is
 #   intended to run in multiple environments; otherwise, check them in:
