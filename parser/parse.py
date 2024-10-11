@@ -63,15 +63,15 @@ def main(input_file):
             
             previous_section_type = section_type
 
-        write_to_file("raw.txt", "\n".join(
+        write_to_file("data-artifacts/raw.txt", "\n".join(
             pages_as_string(pages, include_metadata=False)))
-        write_to_file("raw_with_meta.txt", "\n".join(
+        write_to_file("data-artifacts/raw_with_meta.txt", "\n".join(
             pages_as_string(pages, include_metadata=True)))
 
         sections: List[Section] = get_sections(pages)
 
 
-        write_to_file("sections.txt", "\n".join(sections_as_string(sections, include_metadata=True)))
+        write_to_file("data-artifacts/sections.txt", "\n".join(sections_as_string(sections, include_metadata=True)))
 
         for section in sections:
             questions = get_questions(section)
@@ -85,7 +85,7 @@ def main(input_file):
         document = Document(sections=sections)
 
         # Write pydantic models to JSON file
-        with open("document.json", "w") as json_file:
+        with open("data-artifacts/document.json", "w") as json_file:
             json_file.write(document.model_dump_json())
         
 

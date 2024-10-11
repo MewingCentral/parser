@@ -48,9 +48,9 @@ def get_questions(section: Section) -> List[Question]:
                     questions[question.question_number].pages.append(
                         i + section.start_page + 1)
 
-        write_to_file(f"current_questions_{i}.txt", "\n".join(
+        write_to_file(f"questions/current_questions_{i}.txt", "\n".join(
             questions_as_string(current_questions, include_metadata=True)))
-        write_to_file(f"next_plus_current_questions_{i}.txt", "\n".join(
+        write_to_file(f"questions/next_plus_current_questions_{i}.txt", "\n".join(
             questions_as_string(next_plus_current_questions, include_metadata=True)))
 
     return sorted(questions.values(), key=lambda q: q.question_number)
