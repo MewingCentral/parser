@@ -21,7 +21,7 @@ def extract_section_info(text: str) -> Tuple[str, str]:
     # BASIC DATA STRUCTURES
     # post 2022 exam regex
     match = re.search(r"Section\s+([A-D])(?:\s+|\n)(.*?)(?:\n|$)", text, re.DOTALL)
-    print("0", match)
+    #print("0", match)
     if match is None:
         #print("unable to get section letter using Regex, must be pre 2022 Exam")
         # Looking for the following 2 lines:
@@ -37,9 +37,9 @@ def extract_section_info(text: str) -> Tuple[str, str]:
             section_number = section_number.strip()
             section_letter = section_letter.strip()
             section_name = section_name.strip()
-            print(f"section_number: '{section_number}'")
-            print(f"section_letter: '{section_letter}'")
-            print(f"section_name: '{section_name}'")
+            #print(f"section_number: '{section_number}'")
+            #print(f"section_letter: '{section_letter}'")
+            #print(f"section_name: '{section_name}'")
 
             if section_number == "I":
                 if section_letter == "A":
@@ -91,7 +91,7 @@ def get_section_type(text: str) -> SectionType | None:
         return None
     
     section_name = " ".join([x.strip() for x in section_name.split(" ") if x.strip() != ""])
-    print(section_name)
+    #print(section_name)
     
     if "Advanced Data Structures".lower() in section_name.lower():
         return SectionType.ADVANCED_DATA_STRUCTURES
