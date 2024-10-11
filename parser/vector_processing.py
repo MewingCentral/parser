@@ -55,7 +55,7 @@ def extract_table_coordinates(input_file : str) -> List[Tuple[float, float, floa
 
     with pdfplumber.open(input_file) as pdf:
         for page_number, page in enumerate(pdf.pages):
-            page = pdf.pages[page_number]
+            page = pdf.pages[0]
             
             for rect in page.objects.get('rect', []):
                 rectangles.append((rect['x0'], rect['y0'], rect['x1'], rect['y1']))

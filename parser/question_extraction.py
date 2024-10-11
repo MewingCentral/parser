@@ -3,7 +3,7 @@ from typing import List, Optional, Dict
 
 
 import re
-import sys
+
 
 # Define the regex pattern to extract questions
 question_pattern = re.compile(
