@@ -1,4 +1,4 @@
-# Testing beautiful soup for scraping PDFs from FE website
+# Scrapes and stores all PDFs from the previous FE webpage
 
 import requests 
 from bs4 import BeautifulSoup
@@ -14,8 +14,21 @@ html = read.content
 soup = BeautifulSoup(html, "html.parser")
 
 # Is the tag a PDF link for an exam that has no discrete section?
-def pdf_before_discrete(tag):
-    return tag.name == "a" and re.search(".pdf", tag["href"]) and not re.search("CS|DS", tag["href"])
+def pdf_after_discrete(tag):
+    is_anchor = tag.has_attr("href")
+    contains_pdf = is_anchor and re.search(".pdf", tag["href"])
+    pdf_not_labeled_with_CS_or_DS = contains_pdf and not re.search("CS|DS", tag["href"])
+
+    if (pdf_not_labeled_with_CS_or_DS):
+        # All exams after August 2016 contain no discrete section
+        exam_date = tag.parent.parent.contents[0].get_text()
+        year_match = re.search(r"[0-9]+$", exam_date)
+        if year_match:
+            year = int(year_match.group())
+            # Return true if the exam was after August 2016
+            return (year > 2016) or (year == 2016 and not re.search("aug|may", exam_date, re.IGNORECASE))
+
+    return False
 
 # Return a string describing the type of exam document
 def get_document_type(file_name):
@@ -26,7 +39,7 @@ def get_document_type(file_name):
     else:
         return "exam"
 
-pdf_anchors = soup.find_all(pdf_before_discrete)
+pdf_anchors = soup.find_all(pdf_after_discrete)
 
 pdfs_dir = "pdfs"
 if (not os.path.exists(pdfs_dir)):
