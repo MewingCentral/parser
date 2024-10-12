@@ -14,13 +14,12 @@ for section in data["sections"]:
         
         question_content = question["text"]
         formatted_prompt = {
-            "id" : question_id,
-            "content" : question_content
+            "question_id" : question_id,
+            "question_content" : question_content
         }
 
         question_titles.append(formatted_prompt)
         question_id += 1
-
 
 formatted_output = {
     "questions" : question_titles
