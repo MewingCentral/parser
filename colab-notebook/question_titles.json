@@ -1,0 +1,52 @@
+{
+    "titles": [
+        {
+            "id": 1,
+            "generated_title": "getDefaultMonsters"
+        },
+        {
+            "id": 2,
+            "generated_title": " whatDoesItDo(head)"
+        },
+        {
+            "id": 3,
+            "generated_title": "Converting infix expression to postfix"
+        },
+        {
+            "id": 4,
+            "generated_title": "assignHeights"
+        },
+        {
+            "id": 5,
+            "generated_title": "insert(int heap, int curSize, int"
+        },
+        {
+            "id": 6,
+            "generated_title": "How many nodes would a trie contain?"
+        },
+        {
+            "id": 7,
+            "generated_title": "Counting A's and B's"
+        },
+        {
+            "id": 8,
+            "generated_title": "How long does it take for a program to process 100,000 data sets"
+        },
+        {
+            "id": 9,
+            "generated_title": "(k + 2)2n"
+        },
+        {
+            "id": 10,
+            "generated_title": "Virus Levels in a 2 -Dimens"
+        },
+        {
+            "id": 11,
+            "generated_title": "Result after each iteration"
+        },
+        {
+            "id": 12,
+            "generated_title": "Base Conversions"
+        }
+    ]
+}
