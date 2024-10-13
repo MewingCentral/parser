@@ -50,7 +50,7 @@ for i in range(0, len(pdf_anchors), 3):
     chunk = pdf_anchors[i:i+3]
 
     # Make the directory for the current exam
-    dir_name = re.findall(r"/(.*)\.", chunk[0].get("href"))[0]
+    dir_name = re.findall(r"^[^\/]+", chunk[0].get("href"))[0]
     if (not os.path.exists(pdfs_dir + "/" + dir_name)):
         os.makedirs(pdfs_dir + "/" + dir_name)
 
