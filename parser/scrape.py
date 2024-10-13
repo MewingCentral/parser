@@ -72,8 +72,6 @@ for i in range(0, len(pdf_anchors), 3):
         pdf.write(response.content)
         pdf.close()
 
-output_file = open("exam_paths.json", "w")
-output_file.write(json.dumps(json_output))
-output_file.close()
-
+with open('exam_paths.json', 'w') as file:
+    json.dump(json_output, file, indent=4)
         
