@@ -22,21 +22,29 @@
 	// "postCreateCommand": "uname -a",
 	// Configure tool-specific properties.
 	// "customizations": {},
+	"postCreateCommand": "sudo chmod +x ./scripts/* && ./scripts/setup.sh",
 	"remoteUser": "vscode",
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"vivaxy.vscode-conventional-commits",
-				"charliermarsh.ruff",
-				"ms-toolsai.jupyter",
+				"yzhang.markdown-all-in-one",
+				"ms-python.mypy-type-checker",
+				"ms-python.black-formatter",
 				"ms-python.python",
-				"KevinRose.vsc-python-indent"
+				"tamasfe.even-better-toml"
 			],
 			"settings": {
 				"conventionalCommits.scopes": [
 					"devcontainer",
-					"experiments"
-				]
+					"experiments",
+					"scripts",
+					"parser"
+				],
+				"[python]": {
+					"editor.defaultFormatter": "ms-python.black-formatter",
+					"editor.formatOnSave": true
+				}
 			}
 		}
 	}
