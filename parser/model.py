@@ -1,14 +1,13 @@
 from enum import Enum, StrEnum
-from pydantic import BaseModel, Field
 from typing import List
 
 from nltk import download as nltk_download
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+from pydantic import BaseModel, Field
 
 NLTK_INITIALIZED: bool = False
-
 PORTER_STEMMER: PorterStemmer | None = None
 STOP_WORDS: set[str] | None = None
 
@@ -16,8 +15,11 @@ STOP_WORDS: set[str] | None = None
 def initialize_nltk():
     nltk_download("stopwords")
     nltk_download("punkt_tab")
+    global STOP_WORDS
     STOP_WORDS = set(stopwords.words("english"))
+    global PORTER_STEMMER
     PORTER_STEMMER = PorterStemmer()
+    global NLTK_INITIALIZED
     NLTK_INITIALIZED = True
 
 
