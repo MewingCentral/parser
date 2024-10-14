@@ -50,6 +50,11 @@
 					},
 					"editor.defaultFormatter": "charliermarsh.ruff"
 				},
+				"[yaml]": {
+					"editor.insertSpaces": true,
+					"editor.tabSize": 2,
+					"editor.defaultFormatter": "redhat.vscode-yaml"
+				},
 				"notebook.formatOnSave.enabled": true,
 				"notebook.codeActionsOnSave": {
 					"notebook.source.fixAll": "explicit",
@@ -58,4 +63,5 @@
 				"ruff.nativeServer": "on"
 			}
 		}
-	}}
+	}
+}
