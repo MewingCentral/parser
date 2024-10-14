@@ -1,6 +1,25 @@
-from typing import Tuple
 import re
+from datetime import datetime
+from typing import Tuple
+
 from parser.model import PageType, SectionType
+
+
+def extract_date_from_page(text: str) -> datetime | None:
+    # print("text: ", text)
+    """
+    Extracts a date in the format "May 22, 2021" from a string.
+
+    Args:
+    text (str): The input string containing the date.
+
+    Returns:
+    datetime | None: The extracted date as a datetime object or None if no date is found.
+    """
+    match = re.search(r"\b([A-Za-z]+\d{1,2},\d{4})\b", text.replace(" ", ""))
+    if match:
+        return datetime.strptime(match.group(0), "%B%d,%Y")
+    return None
 
 
 def extract_section_info(text: str) -> Tuple[str, str] | None:

@@ -12,6 +12,11 @@ PORTER_STEMMER: PorterStemmer | None = None
 STOP_WORDS: set[str] | None = None
 
 
+class TextLocation(BaseModel, strict=True):
+    start_index: int
+    end_index: int
+
+
 def initialize_nltk():
     nltk_download("stopwords")
     nltk_download("punkt_tab")
@@ -21,6 +26,12 @@ def initialize_nltk():
     PORTER_STEMMER = PorterStemmer()
     global NLTK_INITIALIZED
     NLTK_INITIALIZED = True
+
+
+class Semester(StrEnum):
+    SPRING = "Spring"
+    SUMMER = "Summer"
+    FALL = "Fall"
 
 
 class PageType(StrEnum):
@@ -101,19 +112,36 @@ class QuestionDescription(BaseModel, strict=True):
     )
 
 
+class Text(BaseModel, strict=True):
+    text: str
+    location: TextLocation
+
+    @staticmethod
+    def from_string(text: str, parent_text: str, start_index: int) -> "Text":
+        return Text(
+            text=text,
+            location=TextLocation(
+                start_index=start_index,
+                end_index=start_index + len(text),
+            ),
+        )
+
+
 class SubQuestion(BaseModel, strict=True):
     # text excluding the sub-question number and the "a) " prefix
-    text: str
+    original_text: Text
+    filtered_text: Text
 
     # eg. "a", "b", "c"
     identifier: str
     sub_questions: List["SubQuestion"]
+    extracted_using_underscores: bool
     points: int | None = None
     classification: QuestionClassification | None = None
 
 
 class Metadata(BaseModel, strict=True):
-    original_text: str = Field(..., exclude=True)
+    # original_text: str = Field(..., exclude=True)
 
     generated_name: str | None = None
     removed_stop_words: str | None = None
@@ -162,8 +190,12 @@ class Question(BaseModel, strict=True):
     max_points: int
     category: str
     sub_category: str
-    # text excluding the question number, category, max points, and sub-questions
-    text: str
+
+    # text excluding the question number, category, max points,
+    original_text: str
+
+    # original_text without the sub-questions
+    filtered_text: str
 
     sub_questions: List[SubQuestion]
     metadata: Metadata
@@ -214,5 +246,5 @@ def questions_as_string(
             result.append(
                 f"Question {question.question_number}, SectionType: {question.section_type}, Category: {question.category}, SubCategory: {question.sub_category}"
             )
-        result.append(question.text)
+        result.append(question.filtered_text)
     return result
