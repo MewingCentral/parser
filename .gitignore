@@ -161,7 +161,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-
 # Downloaded models folder... see ./scripts/install_hermes.sh for more information
 models
 
