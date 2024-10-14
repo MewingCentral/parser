@@ -1,110 +1,23 @@
+import os
 import sys
-from pypdf import PdfReader
-from pydantic import BaseModel
 from typing import List
 
+from pydantic import BaseModel
+
+from parser.dataset.exam import Exam
 from parser.model import (
-    PageType,
-    SectionType,
     Section,
-    Page,
-    pages_as_string,
-    sections_as_string,
 )
-from parser.page_processing import get_page_type, get_section_type
-from parser.section_processing import get_sections
-from parser.question_extraction import get_questions
 
 
 class PreProcessedExam(BaseModel):
     sections: List[Section]
 
 
-def main(input_file: str, verbose: bool = False) -> List[Section]:
-    try:
-        # Open and read the PDF file
-        reader = PdfReader(input_file)
-
-        # Process the PDF content here
-        # For example, you could extract text from each page:
-        pages: List[Page] = []
-        previous_section_type: SectionType | None = None
-        for page_number, page in enumerate(reader.pages):
-            if previous_section_type is None:
-                assert page_number == 0
-
-            text = page.extract_text()
-
-            page_type = get_page_type(text)
-            if page_type is None:
-                print(
-                    f"Breaking on page {page_number} because it is not a valid PageType"
-                )
-                break
-
-            section_type: SectionType | None = None
-            if page_type == PageType.SECTION:
-                section_type = get_section_type(text)
-                if section_type is None:
-                    print(
-                        f"Breaking on page {
-                        page_number} because it is not a valid SectionType"
-                    )
-                    print(text)
-                    break
-            else:
-                section_type = previous_section_type
-
-            if section_type is None:
-                raise ValueError("section_type is None")
-
-            new_page = Page(
-                page_type=page_type,
-                section_type=section_type,
-                page_number=page_number,
-                text=text,
-            )
-            pages.append(new_page)
-
-            previous_section_type = section_type
-
-        if verbose:
-            write_to_file(
-                "raw.txt", "\n".join(pages_as_string(pages, include_metadata=False))
-            )
-            write_to_file(
-                "raw_with_meta.txt",
-                "\n".join(pages_as_string(pages, include_metadata=True)),
-            )
-
-        sections: List[Section] = get_sections(pages)
-
-        if verbose:
-            write_to_file(
-                "sections.txt",
-                "\n".join(sections_as_string(sections, include_metadata=True)),
-            )
-
-        for section in sections:
-            questions = get_questions(section)
-            section.questions = questions
-
-        class Document(BaseModel):
-            sections: List[Section]
-
-        document = Document(sections=sections)
-
-        # Write pydantic models to JSON file
-        with open("document.json", "w") as json_file:
-            json_file.write(document.model_dump_json())
-
-        return sections
-    except Exception as e:
-        print(f"An error occurred: {e}", file=sys.stderr)
-        import traceback
-
-        traceback.print_exc()
-        sys.exit(1)
+def main(input_file: str, output_file: str, verbose: bool = False):
+    exam: Exam = Exam(input_file, None)
+    exam.load_data(verbose)
+    exam.write(output_file)
 
 
 def write_to_file(filename: str, content: str):
@@ -126,4 +39,12 @@ if __name__ == "__main__":
         sys.exit(1)
 
     input_file = sys.argv[1]
-    main(input_file)
+
+    output_file = (
+        os.path.dirname(input_file)
+        + "/"
+        + os.path.basename(input_file).removesuffix(".pdf")
+        + "_extracted.json"
+    )
+
+    main(input_file, output_file)

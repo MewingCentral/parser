@@ -1,17 +1,18 @@
-import sys
-from parser.model import (
-    Section,
-    Question,
-    Page,
-    SectionType,
-    PageType,
-    SubQuestion,
-    Metadata,
-)
-from typing import List, Dict
-
-
 import re
+import sys
+from copy import copy
+from typing import Dict, List
+
+from parser.model import (
+    Metadata,
+    Page,
+    PageType,
+    Question,
+    Section,
+    SectionType,
+    SubQuestion,
+    Text,
+)
 
 # Define the regex pattern to extract questions
 question_pattern = re.compile(
@@ -54,8 +55,13 @@ def get_questions(section: Section) -> List[Question]:
             if question.question_number in questions:
                 # this means that the question spanned multiple pages and the text spanning both pages should be updated
 
-                if questions[question.question_number].text != question.text:
-                    questions[question.question_number].text = question.text
+                if (
+                    questions[question.question_number].filtered_text
+                    != question.filtered_text
+                ):
+                    questions[
+                        question.question_number
+                    ].filtered_text = question.filtered_text
                     assert next is not None
                     questions[question.question_number].pages.append(
                         i + section.start_page + 1
@@ -104,9 +110,12 @@ def extract_questions(text: str, section_type: SectionType) -> List[Question]:
     for match in matches:
         question_number, max_points, category, sub_category, question_text = match
 
+        original_text = question_text
         sub_questions = extract_sub_questions(question_text)
         for sub_question in sub_questions:
-            question_text = question_text.replace(sub_question.text, "").strip()
+            question_text = question_text.replace(
+                sub_question.original_text.text, ""
+            ).strip()
 
         question = Question(
             pages=[],
@@ -115,9 +124,10 @@ def extract_questions(text: str, section_type: SectionType) -> List[Question]:
             max_points=int(max_points),
             category=category,
             sub_category=sub_category,
-            text=question_text,
+            filtered_text=question_text,
+            original_text=original_text,
             sub_questions=sub_questions,
-            metadata=Metadata(original_text=question_text),
+            metadata=Metadata(),
         )
 
         questions.append(question)
@@ -125,17 +135,70 @@ def extract_questions(text: str, section_type: SectionType) -> List[Question]:
     return questions
 
 
-# (?m)^\s*(?:\(\s*([a-z])\s*\)|([a-z])\.)\s*(?:\(\s*(\d+)\s*pts?\s*\))?\s*([\s\S]*?)(?=^\s*(?:\(\s*[a-z]\s*\)|[a-z]\.)|\Z)
+def extract_fill_in_the_blank_sub_questions(text: str) -> List[SubQuestion]:
+    text_lines = text.split("\n")
+    sub_questions: List[SubQuestion] = []
+
+    current_index_in_master_text = 0
+    for line in text_lines:
+        # max_index_in_master_text = current_index_in_master_text + len(line)
+
+        line_without_whitespace = line.replace(" ", "")
+        if "_____" in line_without_whitespace and (
+            "=" in line_without_whitespace
+            or ":" in line_without_whitespace
+            or ";" in line_without_whitespace
+        ):
+            sub_question = SubQuestion(
+                identifier="",
+                points=None,
+                original_text=Text.from_string(
+                    line, line, current_index_in_master_text
+                ),
+                filtered_text=Text.from_string(
+                    line, line, current_index_in_master_text
+                ),
+                sub_questions=[],
+                extracted_using_underscores=True,
+            )
+            sub_questions.append(sub_question)
+
+        current_index_in_master_text += len(line) + 1  # +1 for the newline character
+
+    return sub_questions
+
+
+def is_outlier_sub_question(msg: str) -> bool:
+    # Aug 17, Fall 2017 FE Page 16
+    if " \n(a) int lowestOneBit(int n)" in msg:
+        return True
+    # Aug 17, Fall 2017 FE Page 16
+    if " \n(b) int highestOneBit(int n)  - returns" in msg:
+        return True
+
+    return False
 
 
 def extract_sub_questions(text: str) -> List[SubQuestion]:
-    matches = sub_question_pattern.findall(text)
+    matches = sub_question_pattern.finditer(text)  # Use finditer to get match objects
 
     sub_questions: List[SubQuestion] = []
 
     for match in matches:
-        # print(f"match: {match}")
-        letter, letter_alt, letter_alt2, points, question_text = match
+        # Extract the entire matched string
+        original_text = match.group(0)
+
+        if is_outlier_sub_question(original_text):
+            print(f"Skipping outlier sub-question: {original_text}")
+            continue
+
+        question_text: str
+        letter: str
+        letter_alt: str
+        letter_alt2: str
+        points: str
+
+        letter, letter_alt, letter_alt2, points, question_text = match.groups()
         assert (
             sum(x is not None and x != "" for x in [letter, letter_alt, letter_alt2])
             == 1
@@ -143,7 +206,7 @@ def extract_sub_questions(text: str) -> List[SubQuestion]:
 
         letter = letter if letter else letter_alt
         letter = letter if letter else letter_alt2
-        # print(f"letter: {letter}, points: {points}, question_text: {question_text}")
+
         question_text = question_text.strip()
 
         # Beginning of manual edge-case handling
@@ -155,14 +218,32 @@ def extract_sub_questions(text: str) -> List[SubQuestion]:
 
         sub_questions_in_sub_question = extract_sub_questions(question_text)
 
-        # remove
+        if len(sub_questions_in_sub_question) == 0:
+            sub_questions_in_sub_question = extract_fill_in_the_blank_sub_questions(
+                question_text
+            )
+
+        filtered_text = copy(question_text)
+        for sub_question in sub_questions_in_sub_question:
+            filtered_text = question_text.replace(
+                sub_question.original_text.text, ""
+            ).strip()
 
         sub_question = SubQuestion(
             identifier=letter,
             points=int(points) if points else None,
-            text=question_text,
+            filtered_text=Text.from_string(
+                filtered_text, original_text, text.find(original_text)
+            ),
+            original_text=Text.from_string(
+                original_text, original_text, text.find(original_text)
+            ),
             sub_questions=sub_questions_in_sub_question,
+            extracted_using_underscores=False,
         )
         sub_questions.append(sub_question)
+
+    if len(sub_questions) == 0:
+        sub_questions = extract_fill_in_the_blank_sub_questions(text)
 
     return sub_questions
