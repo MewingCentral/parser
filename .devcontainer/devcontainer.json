@@ -55,6 +55,22 @@
 					"editor.tabSize": 2,
 					"editor.defaultFormatter": "redhat.vscode-yaml"
 				},
+				"[shell]": {
+					"editor.defaultFormatter": "foxundermoon.shell-format",
+					"editor.formatOnSave": true
+				},
+				"[dockerfile]": {
+					"editor.defaultFormatter": "foxundermoon.shell-format",
+					"editor.formatOnSave": true
+				},
+				"[dotenv]": {
+					"editor.defaultFormatter": "foxundermoon.shell-format",
+					"editor.formatOnSave": true
+				},
+				"[ignore]": {
+					"editor.defaultFormatter": "codezombiech.gitignore",
+					"editor.formatOnSave": true
+				},
 				"notebook.formatOnSave.enabled": true,
 				"notebook.codeActionsOnSave": {
 					"notebook.source.fixAll": "explicit",
