@@ -17,4 +17,7 @@ else
     poetry install --all-extras --with dev,llm
 fi
 
+# Install pre-commit
+pre-commit install
+
 exit 0
