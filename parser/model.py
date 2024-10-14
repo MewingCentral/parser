@@ -2,6 +2,24 @@ from enum import Enum, StrEnum
 from pydantic import BaseModel, Field
 from typing import List
 
+from nltk import download as nltk_download
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
+
+NLTK_INITIALIZED: bool = False
+
+PORTER_STEMMER: PorterStemmer | None = None
+STOP_WORDS: set[str] | None = None
+
+
+def initialize_nltk():
+    nltk_download("stopwords")
+    nltk_download("punkt_tab")
+    STOP_WORDS = set(stopwords.words("english"))
+    PORTER_STEMMER = PorterStemmer()
+    NLTK_INITIALIZED = True
+
 
 class PageType(StrEnum):
     SECTION = "Section"
@@ -53,7 +71,7 @@ class QuestionInputType(str, Enum):
 
     TIME_COMPLEXITY_WITH_PROOF = "TIME_COMPLEXITY_WITH_PROOF"
     SPACE_COMPLEXITY_WITH_PROOF = "SPACE_COMPLEXITY_WITH_PROOF"
-    
+
     INTEGER_ANSWER = "INTEGER_ANSWER"
 
 
@@ -69,6 +87,18 @@ class QuestionClassification(BaseModel, strict=True):
     )
 
 
+# Define the structure for query responses
+class QuestionDescription(BaseModel, strict=True):
+    chain_of_thought: str = Field(
+        ...,
+        description="The chain of thought that led to the prediction.",
+    )
+    description: str = Field(
+        ...,
+        description="What the exam question is asking for.",
+    )
+
+
 class SubQuestion(BaseModel, strict=True):
     # text excluding the sub-question number and the "a) " prefix
     text: str
@@ -76,8 +106,51 @@ class SubQuestion(BaseModel, strict=True):
     # eg. "a", "b", "c"
     identifier: str
     sub_questions: List["SubQuestion"]
-    max_points: int | None = None
+    points: int | None = None
     classification: QuestionClassification | None = None
+
+
+class Metadata(BaseModel, strict=True):
+    original_text: str = Field(..., exclude=True)
+
+    generated_name: str | None = None
+    removed_stop_words: str | None = None
+    lemmatized_text: str | None = None
+
+    classification: QuestionClassification | None = None
+    description: QuestionDescription | None = None
+    classification_on_description: QuestionClassification | None = None
+
+    def run_nlp_preprocessing(self):
+        self.removed_stop_words = self.remove_stop_words(self.original_text)
+        self.lemmatized_text = self.lemmatize_text(self.removed_stop_words)
+
+    def lemmatize_text(self, text: str) -> str:
+        if not NLTK_INITIALIZED:
+            initialize_nltk()
+        assert PORTER_STEMMER is not None
+
+        word_tokens = word_tokenize(text)
+        lemmatized_sentence = [PORTER_STEMMER.stem(word) for word in word_tokens]
+        return " ".join(lemmatized_sentence)
+
+    def remove_stop_words(self, text: str) -> str:
+        if not NLTK_INITIALIZED:
+            initialize_nltk()
+        assert STOP_WORDS is not None
+
+        word_tokens = word_tokenize(text)
+        # converts the words in word_tokens to lower case and then checks whether
+        # they are present in stop_words or not
+        filtered_sentence = [w for w in word_tokens if w.lower() not in STOP_WORDS]
+        # with no lower case conversion
+        filtered_sentence = []
+
+        for w in word_tokens:
+            if w not in STOP_WORDS:
+                filtered_sentence.append(w)
+
+        return " ".join(filtered_sentence)
 
 
 class Question(BaseModel, strict=True):
@@ -91,7 +164,7 @@ class Question(BaseModel, strict=True):
     text: str
 
     sub_questions: List[SubQuestion]
-    classification: QuestionClassification | None = None
+    metadata: Metadata
 
 
 class Section(BaseModel, strict=True):
