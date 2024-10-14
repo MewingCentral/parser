@@ -48,7 +48,9 @@
 				"ms-python.python",
 				"charliermarsh.ruff",
 				"tamasfe.even-better-toml",
-				"redhat.vscode-yaml"
+				"redhat.vscode-yaml",
+				"foxundermoon.shell-format",
+				"codezombiech.gitignore"
 			],
 			"settings": {
 				"conventionalCommits.scopes": [
@@ -69,6 +71,22 @@
 					"editor.insertSpaces": true,
 					"editor.tabSize": 2,
 					"editor.defaultFormatter": "redhat.vscode-yaml"
+				},
+				"[shell]": {
+					"editor.defaultFormatter": "foxundermoon.shell-format",
+					"editor.formatOnSave": true
+				},
+				"[dockerfile]": {
+					"editor.defaultFormatter": "foxundermoon.shell-format",
+					"editor.formatOnSave": true
+				},
+				"[dotenv]": {
+					"editor.defaultFormatter": "foxundermoon.shell-format",
+					"editor.formatOnSave": true
+				},
+				"[ignore]": {
+					"editor.defaultFormatter": "codezombiech.gitignore",
+					"editor.formatOnSave": true
 				},
 				"notebook.formatOnSave.enabled": true,
 				"notebook.codeActionsOnSave": {
