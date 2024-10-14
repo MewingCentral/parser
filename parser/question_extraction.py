@@ -4,11 +4,11 @@ from parser.model import (
     Question,
     Page,
     SectionType,
-    questions_as_string,
     PageType,
     SubQuestion,
+    Metadata,
 )
-from typing import List, Optional, Dict
+from typing import List, Dict
 
 
 import re
@@ -31,9 +31,7 @@ def get_questions(section: Section) -> List[Question]:
     for i, page in enumerate(section.pages):
         assert page.page_type == PageType.QUESTION
 
-        next: Optional[Page] = (
-            section.pages[i + 1] if i + 1 < len(section.pages) else None
-        )
+        next: Page | None = section.pages[i + 1] if i + 1 < len(section.pages) else None
 
         next_plus_current = apply_header_filter(page.text) + (
             "\n" + apply_header_filter(next.text) if next is not None else ""
@@ -83,9 +81,9 @@ def apply_header_filter(text: str) -> str:
     # remove the header and footer metadata
 
     new_text: List[str] = []
-    text = text.split("\n")
+    split_text: List[str] = text.split("\n")
 
-    for line in text:
+    for line in split_text:
         if line.startswith("Page"):
             continue
         if line.startswith("Summer"):
@@ -119,7 +117,9 @@ def extract_questions(text: str, section_type: SectionType) -> List[Question]:
             sub_category=sub_category,
             text=question_text,
             sub_questions=sub_questions,
+            metadata=Metadata(original_text=question_text),
         )
+
         questions.append(question)
 
     return questions
