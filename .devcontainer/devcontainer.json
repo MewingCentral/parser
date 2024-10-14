@@ -30,9 +30,10 @@
 				"vivaxy.vscode-conventional-commits",
 				"yzhang.markdown-all-in-one",
 				"ms-python.mypy-type-checker",
-				"ms-python.black-formatter",
 				"ms-python.python",
-				"tamasfe.even-better-toml"
+				"charliermarsh.ruff",
+				"tamasfe.even-better-toml",
+				"redhat.vscode-yaml"
 			],
 			"settings": {
 				"conventionalCommits.scopes": [
@@ -42,10 +43,19 @@
 					"parser"
 				],
 				"[python]": {
-					"editor.defaultFormatter": "ms-python.black-formatter",
-					"editor.formatOnSave": true
-				}
+					"editor.formatOnSave": true,
+					"editor.codeActionsOnSave": {
+						"source.fixAll": "explicit",
+						"source.organizeImports": "explicit"
+					},
+					"editor.defaultFormatter": "charliermarsh.ruff"
+				},
+				"notebook.formatOnSave.enabled": true,
+				"notebook.codeActionsOnSave": {
+					"notebook.source.fixAll": "explicit",
+					"notebook.source.organizeImports": "explicit"
+				},
+				"ruff.nativeServer": "on"
 			}
 		}
-	}
-}
+	}}
