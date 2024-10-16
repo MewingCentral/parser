@@ -14,12 +14,11 @@ def pdf_after_discrete(tag):
 
     if (pdf_not_labeled_with_CS_or_DS):
         # All exams after August 2016 contain no discrete section
-        exam_date = tag.parent.parent.contents[0].get_text()
-        year_match = re.search(r"[0-9]+$", exam_date)
+        year_match = re.search(r"[0-9]{4}", tag["href"])
         if year_match:
             year = int(year_match.group())
             # Return true if the exam was after August 2016
-            return (year > 2016) or (year == 2016 and not re.search("aug|may", exam_date, re.IGNORECASE))
+            return (year > 2016) or (year == 2016 and not re.search("aug|may", tag["href"], re.IGNORECASE))
 
     return False
 
@@ -45,35 +44,31 @@ pdfs_dir = "pdfs"
 if (not os.path.exists(pdfs_dir)):
     os.makedirs(pdfs_dir)
 
-for i in range(0, len(pdf_anchors), 3):
-    # A chunk corresponds to all docs for a single exam
-    chunk = pdf_anchors[i:i+3]
-
+for pdf_anchor in pdf_anchors:
     # Make the directory for the current exam
-    dir_name = re.findall(r"^[^\/]+", chunk[0].get("href"))[0]
+    dir_name = re.findall(r"^[^\/]+", pdf_anchor.get("href"))[0]
     if (not os.path.exists(pdfs_dir + "/" + dir_name)):
         os.makedirs(pdfs_dir + "/" + dir_name)
 
+    # Initialize empty dict entry for dir_name if one doesn't already exist
+    if dir_name not in json_output["documents"]:
+        json_output["documents"][dir_name] = {}
+
+    cur_link = pdf_anchor.get("href")
+    response = requests.get(url + cur_link)
+
+    # Create path string for the current PDF
+    file_name = cur_link.rsplit('/', 1)[-1]
+    doc_type = get_document_type(file_name)
+    path = pdfs_dir + "/" + dir_name + "/" + file_name
+
     # Configure json output
-    json_output["documents"][dir_name] = {}
+    json_output["documents"][dir_name][doc_type] = path
 
-    for doc in chunk:
-        # Request the PDF
-        cur_link = doc.get("href")
-        response = requests.get(url + cur_link)
-
-        # Create path string for the current PDF
-        file_name = cur_link.rsplit('/', 1)[-1]
-        doc_type = get_document_type(file_name)
-        path = pdfs_dir + "/" + dir_name + "/" + file_name
-
-        # Configure json output
-        json_output["documents"][dir_name][doc_type] = path
-
-        # Store the PDF
-        pdf = open(path, 'wb')
-        pdf.write(response.content)
-        pdf.close()
+    # Store the PDF
+    pdf = open(path, 'wb')
+    pdf.write(response.content)
+    pdf.close()
 
 with open('exam_paths.json', 'w') as file:
     json.dump(json_output, file, indent=4)
