@@ -6,13 +6,6 @@ import re
 import os
 import json
 
-json_output = {"documents":{}}
-
-url = "https://www.cs.ucf.edu/registration/exm/"
-read = requests.get(url) # Get request for HTML
-html = read.content
-soup = BeautifulSoup(html, "html.parser")
-
 # Is the tag a PDF link for an exam that has no discrete section?
 def pdf_after_discrete(tag):
     is_anchor = tag.has_attr("href")
@@ -38,6 +31,13 @@ def get_document_type(file_name):
         return "info"
     else:
         return "exam"
+    
+json_output = {"documents":{}}
+
+url = "https://www.cs.ucf.edu/registration/exm/"
+read = requests.get(url) # Get request for HTML
+html = read.content
+soup = BeautifulSoup(html, "html.parser")
 
 pdf_anchors = soup.find_all(pdf_after_discrete)
 
@@ -58,9 +58,11 @@ for i in range(0, len(pdf_anchors), 3):
     json_output["documents"][dir_name] = {}
 
     for doc in chunk:
+        # Request the PDF
         cur_link = doc.get("href")
         response = requests.get(url + cur_link)
 
+        # Create path string for the current PDF
         file_name = cur_link.rsplit('/', 1)[-1]
         doc_type = get_document_type(file_name)
         path = pdfs_dir + "/" + dir_name + "/" + file_name
@@ -68,6 +70,7 @@ for i in range(0, len(pdf_anchors), 3):
         # Configure json output
         json_output["documents"][dir_name][doc_type] = path
 
+        # Store the PDF
         pdf = open(path, 'wb')
         pdf.write(response.content)
         pdf.close()
