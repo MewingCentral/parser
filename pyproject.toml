@@ -11,6 +11,9 @@ pypdf = "5.0.0"
 pillow = "10.4.0"
 pydantic = "^2.9.2"
 pymupdf = "^1.24.10"
+torch = "^2.4.1"
+transformers = "^4.45.2"
+datasets = "^3.0.1"
 
 
 [build-system]
