@@ -1,10 +1,11 @@
 # Scrapes and stores all PDFs from the previous FE webpage
 
+import json
+import os
+import re
+
 import requests
 from bs4 import BeautifulSoup
-import re
-import os
-import json
 
 
 # Is the tag a PDF link for an exam that has no discrete section?
