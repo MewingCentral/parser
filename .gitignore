@@ -166,5 +166,7 @@ models
 
 # Foundation Exam Files
 fe_files
+pdfs
 
+exam_paths.json
 document.json
