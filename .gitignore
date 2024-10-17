@@ -161,18 +161,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# Scraped PDF directories
-/pdfs
+# Downloaded models folder... see ./scripts/install_hermes.sh for more information
+models
 
-# Generated files
-current_questions_0.txt
-current_questions_1.txt
-current_questions_2.txt
+# Foundation Exam Files
+fe_files
+
 document.json
-next_plus_current_questions_0.txt
-next_plus_current_questions_1.txt
-next_plus_current_questions_2.txt
-raw.txt
-raw_with_meta.txt
-sections.txt
-exam_paths.json
